@@ -1,4 +1,5 @@
 ### My COVID Rt estimation and general covid visualizations
+### Much code used from https://www.datacamp.com/community/tutorials/replicating-in-r-covid19
 library(tidyverse)
 library(HDInterval)
 library(smoother)
@@ -24,10 +25,10 @@ r_t_range = seq(0, R_T_MAX, length = R_T_MAX*100 + 1)
 GAMMA = 1/4
 
 ### Variables for Automation
-filename <- paste0("bc-covid-epi-rt-",Sys.Date(),".PNG")
+filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 834
+count.yesterday <- 694
 
 covid.raw <- read.csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
