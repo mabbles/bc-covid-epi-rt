@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 694
+count.yesterday <- 711
 
 covid.raw <- read.csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -50,6 +50,15 @@ covid.estimated_rt <- covid.daily_count %>% smooth_new_cases() %>%
   compute_likelihood() %>%
   compute_posterior() %>%
   estimate_rt() 
+
+### Temp for future
+### Output smoothed cases for potential graphing
+# covid.smoothed <- covid.daily_count %>% smooth_new_cases()
+# 
+# ### Merge case counts back into estimated_rt
+# covid.estimated_rt <- covid.estimated_rt %>% right_join(covid.smoothed, by="Reported_Date") %>%
+#   arrange(Reported_Date)
+###
 
 ###Post-processing variables for chart automation.
 date.lastdata <- last(covid.daily_count$Reported_Date)
