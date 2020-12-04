@@ -51,6 +51,13 @@ covid.estimated_rt <- covid.daily_count %>% smooth_new_cases() %>%
   compute_posterior() %>%
   estimate_rt() 
 
+### Output smoothed cases for potential graphing
+# covid.smoothed <- covid.daily_count %>% smooth_new_cases()
+# 
+# ### Merge case counts back into estimated_rt
+# covid.estimated_rt <- covid.estimated_rt %>% right_join(covid.smoothed, by="Reported_Date") %>%
+#   arrange(Reported_Date)
+
 ###Post-processing variables for chart automation.
 date.lastdata <- last(covid.daily_count$Reported_Date)
 rt.interval <- paste0(last(covid.estimated_rt$r_t_most_likely)," (95% HDI: ",
