@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 647
+count.yesterday <- 566
 
 covid.raw <- read.csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -41,9 +41,9 @@ covid.daily_count <- covid.raw %>%
   slice(1:(n()-1)) %>%
   add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
   pad(start_val = ymd("2020-01-26"), end_val = date.yesterday) %>%
-  mutate(n=replace_na(n,0)) %>%
-  mutate(n=replace(n, which(Reported_Date==ymd("2020-12-04")), 647)) %>% 
-  mutate(n=replace(n, which(Reported_Date==ymd("2020-12-05")), 726))
+  mutate(n=replace_na(n,0)) #%>%
+  #mutate(n=replace(n, which(Reported_Date==ymd("2020-12-04")), 647)) %>% 
+  #mutate(n=replace(n, which(Reported_Date==ymd("2020-12-05")), 726))
 
 
 ### Process, and estimate daily rt  
