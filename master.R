@@ -63,8 +63,8 @@ covid.estimated_rt <- covid.daily_count %>% smooth_new_cases() %>%
 
 ###Post-processing variables for chart automation.
 date.lastdata <- last(covid.daily_count$Reported_Date)
-rt.interval <- paste0(last(covid.estimated_rt$r_t_most_likely)," (95% HDI: ",
-                      last(covid.estimated_rt$r_t_lo),", ",
+rt.interval <- paste0(format(last(covid.estimated_rt$r_t_most_likely), nsmall=2)," (95% HDI: ",
+                      format(last(covid.estimated_rt$r_t_lo), nsmall=2),", ",
                       format(last(covid.estimated_rt$r_t_hi), nsmall=2),")")
 
 ### Create the output graph
