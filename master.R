@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 566
+count.yesterday <- 619
 
 covid.raw <- read.csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -65,7 +65,7 @@ covid.estimated_rt <- covid.daily_count %>% smooth_new_cases() %>%
 date.lastdata <- last(covid.daily_count$Reported_Date)
 rt.interval <- paste0(last(covid.estimated_rt$r_t_most_likely)," (95% HDI: ",
                       last(covid.estimated_rt$r_t_lo),", ",
-                      last(covid.estimated_rt$r_t_hi),")")
+                      format(last(covid.estimated_rt$r_t_hi), nsmall=2),")")
 
 ### Create the output graph
 covid.estimated_rt %>%
