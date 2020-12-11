@@ -39,7 +39,7 @@ covid.daily_count <- covid.raw %>%
   summarize(n=n()) %>%
   arrange(Reported_Date) %>%
   slice(1:(n()-1)) %>%
-  add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
+  #add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
   pad(start_val = ymd("2020-01-26"), end_val = date.yesterday) %>%
   mutate(n=replace_na(n,0)) #%>%
   #mutate(n=replace(n, which(Reported_Date==ymd("2020-12-04")), 647)) %>% 
@@ -87,6 +87,8 @@ covid.estimated_rt %>%
   annotate(geom="text",x=as.Date("2020-11-07"),y=3.1,label="Regional Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
   geom_vline(xintercept = as.numeric(as.Date("2020-11-19")), linetype=6, color='darkred')+ #Province Wide Restrictions
   annotate(geom="text",x=as.Date("2020-11-19"),y=3.1,label="Prov-Wide Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  geom_vline(xintercept = as.numeric(as.Date("2020-12-09")), linetype=6, color='green')+ #First Vaccine Approval
+  annotate(geom="text",x=as.Date("2020-12-09"),y=3.1,label="First Vaccine Approved",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
   geom_ribbon(
     aes(ymin = r_t_lo, ymax = r_t_hi),
     fill = 'blue',
