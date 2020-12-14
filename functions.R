@@ -33,9 +33,10 @@ compute_posterior <- function(likelihood){
       zoo::rollapplyr(likelihood_r_t, 7, sum, partial = TRUE)
     )) %>%
     group_by(Reported_Date) %>%
-    mutate(posterior = posterior / sum(posterior, na.rm = TRUE)) %>%
+    mutate(posterior = posterior / sum(posterior, na.rm = TRUE),
+           posterior = ifelse(is.nan(posterior), 0, posterior)) %>%
     # HACK: NaNs in the posterior create issues later on. So we remove them.
-    mutate(posterior = ifelse(is.nan(posterior), 0, posterior)) %>%
+    #LEGACY remove once tested: mutate(posterior = ifelse(is.nan(posterior), 0, posterior)) %>%
     ungroup() %>%
     select(-likelihood_r_t)
 }
