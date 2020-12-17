@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 522
+count.yesterday <- 640
 
 covid.raw <- read_csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -74,21 +74,23 @@ covid.estimated_rt %>%
   geom_hline(yintercept = 1, linetype = 'solid', color = 'darkblue') +
   geom_hline(yintercept = 0, linetype = 'solid', color = 'gray') +
   geom_vline(xintercept = as.numeric(as.Date("2020-03-13")), linetype=6, color='darkred')+ #PH Emergency
-  annotate(geom="text",x=as.Date("2020-03-13"),y=3.1,label="Public Health Emerg",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-03-13"),y=3.1,label="Public Health Emergency",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-03-17")), linetype=6, color='darkred')+ #Phase 1
-  annotate(geom="text",x=as.Date("2020-03-17"),y=3.1,label="Phase 1 Restrictions",angle = 90,hjust=1, vjust=1, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-03-17"),y=3.1,label="Phase 1 Restrictions",angle = 90,hjust=1, vjust=1, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-05-19")), linetype=6, color='darkred')+ #Phase 2
-  annotate(geom="text",x=as.Date("2020-05-19"),y=3.1,label="Phase 2 Reopening",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-05-19"),y=3.1,label="Phase 2 Reopening",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-06-24")), linetype=6, color='darkred')+ #Phase 3
-  annotate(geom="text",x=as.Date("2020-06-24"),y=3.1,label="Phase 3 Reopening",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-06-24"),y=3.1,label="Phase 3 Reopening",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-10-09")), linetype=6, color='darkred')+ #Liquor Establishments
-  annotate(geom="text",x=as.Date("2020-10-09"),y=3.1,label="Clubs & Alcohol Serving Est",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-10-09"),y=3.1,label="Clubs & Alcohol Serving Est",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-11-07")), linetype=6, color='darkred')+ #Regional Restrictions
-  annotate(geom="text",x=as.Date("2020-11-07"),y=3.1,label="Regional Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-11-07"),y=3.1,label="Regional Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-11-19")), linetype=6, color='darkred')+ #Province Wide Restrictions
-  annotate(geom="text",x=as.Date("2020-11-19"),y=3.1,label="Prov-Wide Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-11-19"),y=3.1,label="Prov-Wide Restrictions",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_vline(xintercept = as.numeric(as.Date("2020-12-09")), linetype=6, color='green')+ #First Vaccine Approval
-  annotate(geom="text",x=as.Date("2020-12-09"),y=3.1,label="First Vaccine Approved",angle = 90,hjust=1, vjust=-0.5, fontface='bold')+
+  annotate(geom="text",x=as.Date("2020-12-09"),y=3.1,label="First Vaccine Approved",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
+  geom_vline(xintercept = as.numeric(as.Date("2020-12-15")), linetype=6, color='green')+ #First Vaccine Approval
+  annotate(geom="text",x=as.Date("2020-12-15"),y=3.1,label="Vaccination Begins",angle = 90,hjust=1, vjust=-0.5, fontface='bold', size=3.5)+
   geom_ribbon(
     aes(ymin = r_t_lo, ymax = r_t_hi),
     fill = 'blue',
