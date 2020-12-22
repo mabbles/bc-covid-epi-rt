@@ -13,7 +13,7 @@ source("functions.R")
 ## Jupyter notebooks use the repr package to create viewable representations
 ## of R objects (https://github.com/IRkernel/repr). I am updating the default
 ## plot dimensions to 12 x 6.
-options(repr.plot.width = 18, repr.plot.height = 6)
+options(repr.plot.width = 18, repr.plot.height = 10)
 
 
 # r_t_range is a vector of possible values for R_t
@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() -1
-count.yesterday <- 624
+count.yesterday <- 529
 
 covid.raw <- read_csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -39,11 +39,11 @@ covid.daily_count <- covid.raw %>%
   summarize(n=n()) %>%
   arrange(Reported_Date) %>%
   slice(1:(n()-1)) %>%
-  #add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
+  add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
   pad(start_val = ymd("2020-01-26"), end_val = date.yesterday) %>%
-  mutate(n=replace_na(n,0)) #%>%
-  #mutate(n=replace(n, which(Reported_Date==ymd("2020-12-12")), 698)) %>% 
-  #mutate(n=replace(n, which(Reported_Date==ymd("2020-12-11")), 689))
+  mutate(n=replace_na(n,0)) %>%
+  mutate(n=replace(n, which(Reported_Date==ymd("2020-12-18")), 652)) %>% 
+  mutate(n=replace(n, which(Reported_Date==ymd("2020-12-19")), 486))
 
 
 ### Process, and estimate daily rt  
@@ -52,14 +52,6 @@ covid.estimated_rt <- covid.daily_count %>% smooth_new_cases() %>%
   compute_posterior() %>%
   estimate_rt() 
 
-### Temp for future
-### Output smoothed cases for potential graphing
-# covid.smoothed <- covid.daily_count %>% smooth_new_cases()
-# 
-# ### Merge case counts back into estimated_rt
-# covid.estimated_rt <- covid.estimated_rt %>% right_join(covid.smoothed, by="Reported_Date") %>%
-#   arrange(Reported_Date)
-###
 
 ###Post-processing variables for chart automation.
 date.lastdata <- last(covid.daily_count$Reported_Date)
@@ -67,10 +59,23 @@ rt.interval <- paste0(format(last(covid.estimated_rt$r_t_most_likely), nsmall=2)
                       format(last(covid.estimated_rt$r_t_lo), nsmall=2),", ",
                       format(last(covid.estimated_rt$r_t_hi), nsmall=2),")")
 
+
+### Add in cumulative vaccination data
+
+covid.estimated_rt <- covid.estimated_rt %>%
+  add_column(cum_vax = NA) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-15")), 409)) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-16")), 1215)) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-17")), 2592)) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-18")), 3644)) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-19")), 3644)) %>%
+  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-20")), 3644))
+  
+
 ### Create the output graph
 covid.estimated_rt %>%
-  ggplot(aes(x = Reported_Date, y = r_t_most_likely)) +
-  geom_line(color = "#14243e") +
+  ggplot(aes(x = Reported_Date)) +
+  geom_line(aes(y = r_t_most_likely),  color = "#14243e") +
   geom_hline(yintercept = 1, linetype = 'solid', color = 'darkblue') +
   geom_hline(yintercept = 0, linetype = 'solid', color = 'gray') +
   geom_vline(xintercept = as.numeric(as.Date("2020-03-13")), linetype=6, color='darkred')+ #PH Emergency
@@ -108,6 +113,8 @@ covid.estimated_rt %>%
                 Information presented is as-is and for informational purposes only"
   ) +
   coord_cartesian(ylim = c(0, 3)) +
+  scale_y_continuous(sec.axis = sec_axis(~ . * 5000, name = "Cumulative Vaccines (red line)")) +
+  geom_line(aes(y = cum_vax/5000), color = "red") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b\n%Y", date_minor_breaks = "1 month")+
   theme(axis.text.x = element_text(angle=0, hjust=0.5, size=10),
         panel.grid.major.y = element_blank(),
@@ -126,31 +133,3 @@ print(message)
     
     
     
-    ######################################## Temp Code
-    
-      ### color for positivity
-      
-#       color_code_order <- c("<0.1%", "0.1%-1%", "1%-2%", "2%-3%", "3%-5%", "5%-10%", "10%-20%", ">20%", "Unknown")
-#     
-#     positivity_colors <- c("<0.1%" = "#313695", 
-#                            "0.1%-1%" = "#4575b4", 
-#                            "1%-2%"= "#74add1", 
-#                            "2%-3%" = "#abd9e9", 
-#                            "3%-5%" = "#fdae61", 
-#                            "5%-10%" = "#f46d43", 
-#                            "10%-20%" = "#d73027", 
-#                            ">20%" = "#a50026",
-#                            "Unknown" = "#4d4d4d") 
-#     
-#   color_code = cut(positivity, breaks = c(-1, 0.1, 1, 2, 3, 5, 10, 20, Inf), 
-#                    labels = c("<0.1%", "0.1%-1%", "1%-2%", "2%-3%", "3%-5%", "5%-10%", "10%-20%", ">20%")) 
-#   # color_code = cut(positivity, breaks = c(-1, 0.099, 0.99, 1.99, 2.99, 4.99, 9.99, 19.99, Inf), 
-#   #                  labels = c("<0.1%", "0.1%-<1%", "1%-<2%", "2%-<3%", "3%-<5%", "5%-<10%", "10%-<20%", ">=20%")),
-#   color_code = str_replace_na(color_code, "Unknown") 
-# arrange(location, date) %>%
-#   arrange(match(color_code, color_code_order)) 
-# 
-# geom_line(aes(y = measure, 
-#               color = as_factor(color_code), 
-#               group = location), 
-#           size = 2) 
