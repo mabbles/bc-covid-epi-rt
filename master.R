@@ -27,8 +27,8 @@ GAMMA = 1/4
 ### Variables for Automation
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
-date.yesterday <- Sys.Date() -1
-count.yesterday <- 518
+date.yesterday <- Sys.Date() -2
+count.yesterday <- 471
 
 covid.raw <- read_csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -38,12 +38,13 @@ covid.daily_count <- covid.raw %>%
   group_by(Reported_Date) %>%
   summarize(n=n()) %>%
   arrange(Reported_Date) %>%
-  slice(1:(n()-1)) %>%
-  add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
+  #slice(1:(n()-1)) %>%
+  #add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
   pad(start_val = ymd("2020-01-26"), end_val = date.yesterday) %>%
-  mutate(n=replace_na(n,0)) %>%
-  mutate(n=replace(n, which(Reported_Date==ymd("2020-12-21")), 444)) #%>% 
- # mutate(n=replace(n, which(Reported_Date==ymd("2020-12-19")), 486))
+  mutate(n=replace_na(n,0)) #%>%
+  mutate(n=replace(n, which(Reported_Date==ymd("2021-01-29")), 408)) %>%
+  mutate(n=replace(n, which(Reported_Date==ymd("2021-01-30")), 473)) #%>%
+  #mutate(n=replace(n, which(Reported_Date==ymd("2021-01-16")), 445))
 
 
 ### Process, and estimate daily rt  
@@ -58,20 +59,6 @@ date.lastdata <- last(covid.daily_count$Reported_Date)
 rt.interval <- paste0(format(last(covid.estimated_rt$r_t_most_likely), nsmall=2)," (95% HDI: ",
                       format(last(covid.estimated_rt$r_t_lo), nsmall=2),", ",
                       format(last(covid.estimated_rt$r_t_hi), nsmall=2),")")
-
-
-### Add in cumulative vaccination data
-
-covid.estimated_rt <- covid.estimated_rt %>%
-  add_column(cum_vax = NA) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-15")), 409)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-16")), 1215)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-17")), 2592)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-18")), 3644)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-19")), 3644)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-20")), 3644)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-21")), 4108)) %>%
-  mutate(cum_vax=replace(cum_vax, which(Reported_Date==ymd("2020-12-22")), 5603))  
   
 
 ### Create the output graph
@@ -115,8 +102,8 @@ covid.estimated_rt %>%
                 Information presented is as-is and for informational purposes only"
   ) +
   coord_cartesian(ylim = c(0, 3)) +
-  scale_y_continuous(sec.axis = sec_axis(~ . * 5000, name = "Cumulative Vaccines (red line)")) +
-  geom_line(aes(y = cum_vax/5000), color = "red") +
+  #scale_y_continuous(sec.axis = sec_axis(~ . * 5000, name = "Cumulative Vaccines (red line)")) +
+  #geom_line(aes(y = cum_vax/5000), color = "red") +
   scale_x_date(date_breaks = "1 month", date_labels = "%b\n%Y", date_minor_breaks = "1 month")+
   theme(axis.text.x = element_text(angle=0, hjust=0.5, size=10),
         panel.grid.major.y = element_blank(),
@@ -127,11 +114,9 @@ covid.estimated_rt %>%
                                         size = 0.5, linetype = "solid")) +
   annotate("rect", xmin=date.today-7, xmax=date.today, ymin=0, ymax=Inf, alpha=.2)
 
-ggsave(paste0(filename), width=9, height= 6.5)
+ggsave(paste0(filename), width=9, height= 7.0)
     
 yesterday.month <- month(date.yesterday, label=TRUE)
 message <- paste0("Reproductive Number (Rt) for BC, ", yesterday.month," ", day(date.yesterday), ", ", year(date.yesterday) ,": ",rt.interval)
 print(message)  
-    
-    
     
