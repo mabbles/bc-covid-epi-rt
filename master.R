@@ -28,7 +28,7 @@ GAMMA = 1/4
 filename <- paste0("./graphs/bc-covid-epi-rt-",Sys.Date(),".PNG")
 date.today <- Sys.Date()
 date.yesterday <- Sys.Date() - 1
-count.yesterday <- 343
+count.yesterday <- 435
 
 covid.raw <- read_csv("http://www.bccdc.ca/Health-Info-Site/Documents/BCCDC_COVID19_Dashboard_Case_Details.csv")
 
@@ -39,9 +39,9 @@ covid.daily_count <- covid.raw %>%
   summarize(n=n()) %>%
   arrange(Reported_Date) %>%
   #slice(1:(n()-1)) %>%
-  add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
+  #add_row(Reported_Date = date.yesterday, n=count.yesterday) %>%
   pad(start_val = ymd("2020-01-26"), end_val = date.yesterday) %>%
-  mutate(n=replace_na(n,0)) %>%
+  mutate(n=replace_na(n,0)) #%>%
   mutate(n=replace(n, which(Reported_Date==ymd("2021-02-05")), 428)) %>%
   mutate(n=replace(n, which(Reported_Date==ymd("2021-02-06")), 465)) #%>%
   #mutate(n=replace(n, which(Reported_Date==ymd("2021-01-16")), 445))
